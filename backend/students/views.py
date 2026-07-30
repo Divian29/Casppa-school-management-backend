@@ -73,3 +73,31 @@ class StudentViewSet(viewsets.ModelViewSet):
         )
 
         return Response(result)
+    
+
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="import/confirm"
+    )
+    def import_confirm(self, request):
+
+        csv_file = request.FILES.get("file")
+
+
+        if not csv_file:
+
+            return Response(
+                {
+                    "error": "CSV file is required"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+        result = StudentCSVImporter.confirm(
+            csv_file
+        )
+
+
+        return Response(result)

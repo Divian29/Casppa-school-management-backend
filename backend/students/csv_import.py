@@ -2,10 +2,14 @@ import csv
 from io import TextIOWrapper
 from datetime import datetime
 
+from django.db import transaction
+
 from parents.models import Parent
 from schools.models import House, SchoolClass, School
 
-from .models import Student, Gender
+from notifications.models import Notification
+
+from .models import Student, Gender, StudentHistory
 
 
 class StudentCSVImporter:
@@ -33,11 +37,13 @@ class StudentCSVImporter:
             )
         )
 
+
         missing = [
             column
             for column in cls.REQUIRED_COLUMNS
             if column not in reader.fieldnames
         ]
+
 
         if missing:
             return {
@@ -62,6 +68,7 @@ class StudentCSVImporter:
             if errors:
                 status = "INVALID"
                 invalid_rows += 1
+
             else:
                 status = "VALID"
                 valid_rows += 1
@@ -88,39 +95,194 @@ class StudentCSVImporter:
 
 
     @classmethod
+    def confirm(cls, csv_file):
+
+        reader = csv.DictReader(
+            TextIOWrapper(
+                csv_file.file,
+                encoding="utf-8"
+            )
+        )
+
+
+        imported = []
+        failed = []
+
+
+        for index, row in enumerate(reader, start=1):
+
+            errors = cls.validate_row(row)
+
+
+            if errors:
+
+                failed.append(
+                    {
+                        "row": index,
+                        "errors": errors
+                    }
+                )
+
+                continue
+
+
+            try:
+
+                with transaction.atomic():
+
+                    school = School.objects.get(
+                        id=row["school"]
+                    )
+
+
+                    student_class = SchoolClass.objects.get(
+                        name=row["class"]
+                    )
+
+
+                    house = House.objects.get(
+                        name=row["house"]
+                    )
+
+
+                    parent = Parent.objects.get(
+                        email=row["parent_email"]
+                    )
+
+
+                    student = Student.objects.create(
+
+                        school=school,
+
+                        admission_number=row["admission_number"],
+
+                        first_name=row["first_name"],
+
+                        last_name=row["last_name"],
+
+                        date_of_birth=row["date_of_birth"],
+
+                        gender=row["gender"],
+
+                        student_class=student_class,
+
+                        house=house,
+
+                        parent=parent,
+
+                    )
+
+
+                    StudentHistory.objects.create(
+
+                        student=student,
+
+                        action="STUDENT_CREATED",
+
+                        new_status=student.status,
+
+                        performed_by="Admin"
+
+                    )
+
+
+                    Notification.objects.create(
+
+                        parent=parent,
+
+                        title="Student Enrollment Successful",
+
+                        message=f"{student.first_name} {student.last_name} has been enrolled.",
+
+                        notification_type="STUDENT"
+
+                    )
+
+
+                    imported.append(
+                        {
+                            "row": index,
+                            "student_id": student.id
+                        }
+                    )
+
+
+            except Exception as e:
+
+
+                failed.append(
+                    {
+                        "row": index,
+                        "errors": [
+                            str(e)
+                        ]
+                    }
+                )
+
+
+        return {
+
+            "success": True,
+
+            "imported_count": len(imported),
+
+            "failed_count": len(failed),
+
+            "imported": imported,
+
+            "failed": failed
+
+        }
+
+
+
+
+    @classmethod
     def validate_row(cls, row):
 
         errors = []
 
 
         required_fields = [
+
             "school",
+
             "admission_number",
+
             "first_name",
+
             "last_name",
+
             "date_of_birth",
+
             "gender",
+
             "class",
+
             "house",
+
             "parent_email",
+
         ]
 
 
-        # Check required fields
         for field in required_fields:
 
             if not row.get(field):
+
                 errors.append(
                     f"{field} is required."
                 )
 
 
         if errors:
+
             return errors
 
 
 
-        # Validate school
+        # School validation
+
         if not School.objects.filter(
             id=row["school"]
         ).exists():
@@ -132,9 +294,13 @@ class StudentCSVImporter:
 
 
         # Duplicate admission number per school
+
         if Student.objects.filter(
+
             school_id=row["school"],
+
             admission_number=row["admission_number"]
+
         ).exists():
 
             errors.append(
@@ -144,6 +310,7 @@ class StudentCSVImporter:
 
 
         # Gender validation
+
         valid_genders = [
             choice[0]
             for choice in Gender.choices
@@ -159,6 +326,7 @@ class StudentCSVImporter:
 
 
         # Date validation
+
         try:
 
             datetime.strptime(
@@ -175,6 +343,7 @@ class StudentCSVImporter:
 
 
         # Class validation
+
         if not SchoolClass.objects.filter(
             name=row["class"]
         ).exists():
@@ -186,6 +355,7 @@ class StudentCSVImporter:
 
 
         # House validation
+
         if not House.objects.filter(
             name=row["house"]
         ).exists():
@@ -197,6 +367,7 @@ class StudentCSVImporter:
 
 
         # Parent validation
+
         if not Parent.objects.filter(
             email=row["parent_email"]
         ).exists():
