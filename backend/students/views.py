@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .csv_import import StudentCSVImporter
 from .serializers import CSVUploadSerializer
+from .models import StudentStatus
 
 from .models import Student
 from .serializers import (
@@ -101,3 +102,21 @@ class StudentViewSet(viewsets.ModelViewSet):
 
 
         return Response(result)
+    
+    @action(
+    detail=False,
+    methods=["get"],
+    url_path="active"
+    )
+    def active_students(self, request):
+
+     students = Student.objects.filter(
+        status=StudentStatus.ACTIVE
+     )
+
+     serializer = self.get_serializer(
+        students,
+        many=True
+     )
+
+     return Response(serializer.data)
