@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from .csv_import import StudentCSVImporter
 from .serializers import CSVUploadSerializer
 from .models import StudentStatus
+from schools.models import School
+from schools.models import SchoolClass
+from .models import StudentStatus
 
 from .models import Student
 from .serializers import (
@@ -120,3 +123,167 @@ class StudentViewSet(viewsets.ModelViewSet):
      )
 
      return Response(serializer.data)
+    
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="promote"
+    )
+    def promote(self, request):
+
+        school_id = request.data.get("school")
+        class_id = request.data.get("class")
+
+
+        school = School.objects.get(
+            id=school_id
+        )
+
+
+        current_class = SchoolClass.objects.get(
+            id=class_id
+        )
+
+
+        result = StudentService.promote_students(
+            school,
+            current_class
+        )
+
+
+        return Response(result)
+    
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="graduate"
+    )
+    def graduate(self, request):
+
+        school_id = request.data.get("school")
+        class_id = request.data.get("class")
+
+
+        if not school_id or not class_id:
+
+            return Response(
+                {
+                    "error": "school and class are required"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+        try:
+
+            school = School.objects.get(
+                id=school_id
+            )
+
+
+            final_class = SchoolClass.objects.get(
+                id=class_id,
+                school=school
+            )
+
+
+        except (
+            School.DoesNotExist,
+            SchoolClass.DoesNotExist
+        ):
+
+            return Response(
+                {
+                    "error": "School or class not found"
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+        result = StudentService.graduate_students(
+            school=school,
+            final_class=final_class
+        )
+
+
+        return Response(result)
+    
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="promote"
+    )
+    def promote(self, request):
+
+        school_id = request.data.get("school")
+        class_id = request.data.get("class")
+
+
+        if not school_id or not class_id:
+            return Response(
+                {
+                    "error": "school and class are required"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+        try:
+
+            school = School.objects.get(
+                id=school_id
+            )
+
+
+            current_class = SchoolClass.objects.get(
+                id=class_id,
+                school=school
+            )
+
+
+        except (School.DoesNotExist, SchoolClass.DoesNotExist):
+
+            return Response(
+                {
+                    "error": "School or class not found"
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+        result = StudentService.promote_students(
+            school=school,
+            current_class=current_class
+        )
+
+
+        return Response(result)
+    
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="graduate"
+    )
+    def graduate(self, request):
+
+        school_id = request.data.get("school")
+        class_id = request.data.get("class")
+
+
+        school = School.objects.get(
+            id=school_id
+        )
+
+        final_class = SchoolClass.objects.get(
+            id=class_id,
+            school=school
+        )
+
+
+        result = StudentService.graduate_students(
+            school=school,
+            final_class=final_class
+        )
+
+
+        return Response(result)

@@ -9,6 +9,7 @@ class School(models.Model):
     email = models.EmailField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    order = models.PositiveIntegerField(default=1)
 
     class Meta:
         ordering = ["name"]
@@ -30,11 +31,15 @@ class SchoolClass(models.Model):
         choices=CLASS_LEVELS,
     )
 
+    order = models.PositiveIntegerField(
+        default=1
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ("school", "name")
-        ordering = ["level", "name"]
+        ordering = ["order", "name"]
 
     def __str__(self):
         return self.name
