@@ -1,0 +1,97 @@
+@classmethod
+def validate_row(cls, row):
+    errors = []
+
+    required_fields = [
+        "school",
+        "admission_number",
+        "first_name",
+        "last_name",
+        "date_of_birth",
+        "gender",
+        "class",
+        "house",
+        "parent_email",
+    ]
+
+    # Required fields
+    for field in required_fields:
+        if not row.get(field):
+            errors.append(f"{field} is required.")
+
+    # Stop if required fields are missing
+    if errors:
+        return errors
+
+
+    # School exists  <-- ADD IT HERE
+    if not School.objects.filter(
+        id=row["school"]
+    ).exists():
+        errors.append(
+            f"School '{row['school']}' does not exist."
+        )
+
+
+    # Duplicate admission number
+    if Student.objects.filter(
+        school_id=row["school"],
+        admission_number=row["admission_number"]
+    ).exists():
+        errors.append(
+            "Admission number already exists for this school."
+        )
+
+
+    # Gender validation
+    valid_genders = [choice[0] for choice in Gender.choices]
+
+    if row["gender"] not in valid_genders:
+        errors.append("Invalid gender.")
+
+
+    # Date validation
+    try:
+        datetime.strptime(
+            row["date_of_birth"],
+            "%Y-%m-%d",
+        )
+    except ValueError:
+        errors.append(
+            "Invalid date format. Use YYYY-MM-DD."
+        )
+
+
+    # Class exists
+    if not SchoolClass.objects.filter(
+        name=row["class"]
+    ).exists():
+        errors.append(
+            f"Class '{row['class']}' does not exist."
+        )
+
+
+    # House exists
+    if not House.objects.filter(
+        name=row["house"]
+    ).exists():
+        errors.append(
+            f"House '{row['house']}' does not exist."
+        )
+
+
+    # Parent exists
+    if not Parent.objects.filter(
+        email=row["parent_email"]
+    ).exists():
+        errors.append(
+            f"Parent '{row['parent_email']}' does not exist."
+        )
+
+
+    return errors
+
+
+school,admission_number,first_name,last_name,date_of_birth,gender,class,house,parent_email
+1,CAS001,John,Doe,2015-03-10,MALE,Primary 1,Red,john@example.com
+1,CAS002,Mary,James,2016-04-12,FEMALE,Primary 1,Blue,mary@example.com

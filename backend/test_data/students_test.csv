@@ -1,0 +1,3 @@
+school,admission_number,first_name,last_name,date_of_birth,gender,class,house,parent_email
+1,CAS003,John,Doe,2015-03-10,MALE,Primary 1,Red,john@example.com
+1,CAS004,Mary,James,2016-04-12,FEMALE,Primary 1,Blue,mary@example.com
