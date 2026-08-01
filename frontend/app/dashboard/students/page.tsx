@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getStudents } from "@/lib/api";
 import { Student } from "@/types/student";
+import StudentStatusBadge from "@/components/students/StudentStatusBadge";
 
 export default function StudentsPage() {
   const tabs = [
@@ -16,6 +17,7 @@ export default function StudentsPage() {
   ];
 
   const [students, setStudents] = useState<Student[]>([]);
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -34,6 +36,20 @@ export default function StudentsPage() {
 
     fetchStudents();
   }, []);
+
+
+  const filteredStudents = students.filter((student) => {
+    const value = search.toLowerCase();
+
+    return (
+      student.first_name.toLowerCase().includes(value) ||
+      student.last_name.toLowerCase().includes(value) ||
+      student.admission_number.toLowerCase().includes(value) ||
+      (student.parent_name &&
+        student.parent_name.toLowerCase().includes(value))
+    );
+  });
+
 
   return (
     <div className="space-y-6">
@@ -71,13 +87,15 @@ export default function StudentsPage() {
       </div>
 
 
-      {/* Actions */}
+      {/* Search and Actions */}
       <div className="rounded-xl bg-white p-6 shadow-sm">
 
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search students..."
             className="w-full rounded-lg border px-4 py-2 md:w-96"
           />
@@ -174,7 +192,7 @@ export default function StudentsPage() {
 
             {!loading &&
               !error &&
-              students.map((student) => (
+              filteredStudents.map((student) => (
                 <tr
                   key={student.id}
                   className="border-b hover:bg-gray-50"
@@ -211,23 +229,25 @@ export default function StudentsPage() {
 
 
                   <td className="p-4">
-                    {student.status}
+                    <StudentStatusBadge status={student.status} />
                   </td>
 
                 </tr>
               ))}
 
 
-            {!loading && !error && students.length === 0 && (
-              <tr>
-                <td
-                  colSpan={7}
-                  className="p-4 text-center text-gray-500"
-                >
-                  No students found
-                </td>
-              </tr>
-            )}
+            {!loading &&
+              !error &&
+              filteredStudents.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="p-4 text-center text-gray-500"
+                  >
+                    No students found
+                  </td>
+                </tr>
+              )}
 
           </tbody>
 
