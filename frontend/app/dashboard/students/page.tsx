@@ -18,6 +18,7 @@ export default function StudentsPage() {
 
   const [students, setStudents] = useState<Student[]>([]);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("Students");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -40,14 +41,29 @@ export default function StudentsPage() {
 
   const filteredStudents = students.filter((student) => {
     const value = search.toLowerCase();
-
-    return (
+  
+  
+    const matchesSearch =
       student.first_name.toLowerCase().includes(value) ||
       student.last_name.toLowerCase().includes(value) ||
       student.admission_number.toLowerCase().includes(value) ||
       (student.parent_name &&
-        student.parent_name.toLowerCase().includes(value))
-    );
+        student.parent_name.toLowerCase().includes(value));
+  
+  
+    const matchesTab =
+      activeTab === "Students"
+        ? true
+        : activeTab === "Running"
+        ? student.status === "ACTIVE"
+        : activeTab === "Suspended"
+        ? student.status === "SUSPENDED"
+        : activeTab === "Alumni"
+        ? student.status === "ALUMNI"
+        : false;
+  
+  
+    return matchesSearch && matchesTab;
   });
 
 
@@ -72,15 +88,16 @@ export default function StudentsPage() {
 
           {tabs.map((tab, index) => (
             <button
-              key={tab}
-              className={`pb-3 text-sm font-medium ${
-                index === 0
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {tab}
-            </button>
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`pb-3 text-sm font-medium ${
+              activeTab === tab
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {tab}
+          </button>
           ))}
 
         </div>
