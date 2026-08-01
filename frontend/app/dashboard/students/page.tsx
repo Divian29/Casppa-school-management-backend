@@ -1,0 +1,139 @@
+export default function StudentsPage() {
+    const tabs = [
+      "Students",
+      "New Enrollment",
+      "Running",
+      "Attendance",
+      "Suspended",
+      "Alumni",
+      "Analytics",
+    ];
+  
+    return (
+      <div className="space-y-6">
+  
+        {/* Header */}
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          <h1 className="text-2xl font-bold">
+            Students
+          </h1>
+  
+          <p className="mt-2 text-gray-500">
+            Manage student records and admissions
+          </p>
+        </div>
+  
+  
+        {/* Tabs */}
+        <div className="rounded-xl bg-white p-4 shadow-sm">
+          <div className="flex gap-6 border-b">
+  
+            {tabs.map((tab, index) => (
+              <button
+                key={tab}
+                className={`pb-3 text-sm font-medium ${
+                  index === 0
+                    ? "border-b-2 border-blue-600 text-blue-600"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+  
+          </div>
+        </div>
+  
+  
+        {/* Actions + Search */}
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+  
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+  
+            {/* Search */}
+            <input
+              type="text"
+              placeholder="Search students..."
+              className="w-full rounded-lg border px-4 py-2 md:w-96"
+            />
+  
+  
+            {/* Actions */}
+            <div className="flex gap-3">
+  
+              <button className="rounded-lg border px-4 py-2">
+                Add Parent
+              </button>
+  
+              <button className="rounded-lg border px-4 py-2">
+                Bulk Upload
+              </button>
+  
+              <button className="rounded-lg bg-blue-600 px-4 py-2 text-white">
+                Add Student
+              </button>
+  
+            </div>
+  
+          </div>
+  
+        </div>
+  
+  
+        {/* Table Placeholder */}
+        <div className="rounded-xl bg-white shadow-sm">
+  
+          <table className="w-full">
+  
+            <thead className="border-b bg-gray-50">
+  
+              <tr>
+                <th className="p-4 text-left">
+                  Name
+                </th>
+  
+                <th className="p-4 text-left">
+                  Admission No
+                </th>
+  
+                <th className="p-4 text-left">
+                  Class
+                </th>
+  
+                <th className="p-4 text-left">
+                  Gender
+                </th>
+  
+                <th className="p-4 text-left">
+                  Status
+                </th>
+              </tr>
+  
+            </thead>
+  
+  
+            <tbody>
+  
+              <tr className="border-b">
+  
+                <td className="p-4">
+                  No students yet
+                </td>
+  
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+  
+              </tr>
+  
+            </tbody>
+  
+  
+          </table>
+  
+        </div>
+  
+      </div>
+    );
+  }
