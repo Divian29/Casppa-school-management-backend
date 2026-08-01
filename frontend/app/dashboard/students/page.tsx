@@ -105,13 +105,14 @@ export default function StudentsPage() {
 
 
       {/* Students Table */}
-      <div className="rounded-xl bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
 
         <table className="w-full">
 
           <thead className="border-b bg-gray-50">
 
             <tr>
+
               <th className="p-4 text-left">
                 Name
               </th>
@@ -125,12 +126,21 @@ export default function StudentsPage() {
               </th>
 
               <th className="p-4 text-left">
+                House
+              </th>
+
+              <th className="p-4 text-left">
+                Parent
+              </th>
+
+              <th className="p-4 text-left">
                 Gender
               </th>
 
               <th className="p-4 text-left">
                 Status
               </th>
+
             </tr>
 
           </thead>
@@ -141,7 +151,7 @@ export default function StudentsPage() {
             {loading && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={7}
                   className="p-4 text-center"
                 >
                   Loading students...
@@ -153,7 +163,7 @@ export default function StudentsPage() {
             {error && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={7}
                   className="p-4 text-center text-red-500"
                 >
                   {error}
@@ -167,24 +177,38 @@ export default function StudentsPage() {
               students.map((student) => (
                 <tr
                   key={student.id}
-                  className="border-b"
+                  className="border-b hover:bg-gray-50"
                 >
 
                   <td className="p-4">
                     {student.first_name} {student.last_name}
                   </td>
 
+
                   <td className="p-4">
                     {student.admission_number}
                   </td>
 
+
                   <td className="p-4">
-                    {student.student_class}
+                    {student.student_class_name}
                   </td>
+
+
+                  <td className="p-4">
+                    {student.house_name || "-"}
+                  </td>
+
+
+                  <td className="p-4">
+                    {student.parent_name || "-"}
+                  </td>
+
 
                   <td className="p-4">
                     {student.gender}
                   </td>
+
 
                   <td className="p-4">
                     {student.status}
@@ -192,6 +216,18 @@ export default function StudentsPage() {
 
                 </tr>
               ))}
+
+
+            {!loading && !error && students.length === 0 && (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="p-4 text-center text-gray-500"
+                >
+                  No students found
+                </td>
+              </tr>
+            )}
 
           </tbody>
 
