@@ -7,10 +7,10 @@ import {
   } from "@/types/student";
   
   
-  const API_URL =
-    process.env.NEXT_PUBLIC_API_URL ||
-    "http://127.0.0.1:8000";
-  
+//   const API_URL =
+//     process.env.NEXT_PUBLIC_API_URL ||
+//     "http://127.0.0.1:8000";
+ const API_URL = process.env.NEXT_PUBLIC_API_URL;
   
   
   async function request(url: string, options?: RequestInit) {
