@@ -32,4 +32,6 @@ interface StudentStatusBadgeProps {
         {labels[status] || status}
       </span>
     );
+
+    
   }
