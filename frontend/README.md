@@ -34,3 +34,67 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# Casppa Frontend
+
+Frontend application for the Casppa School Management System.
+
+## Built With
+
+- Next.js 15
+- React
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+
+## Features
+
+Completed:
+- Dashboard layout
+- Student management page
+- Student listing from Django REST API
+
+Coming soon:
+- Student enrollment
+- Bulk upload
+- Parent management
+- Attendance
+- Analytics
+
+## Setup
+
+Clone repository:
+
+```bash
+git clone <repo-url>
+cd frontend
+
+
+Install dependencies:
+
+npm install
+
+Create .env.local
+
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+
+Run development server:
+
+npm run dev
+
+Application runs on:
+
+http://localhost:3000
+Backend
+
+This frontend connects to the Casppa Django REST API backend.
+
+
+---
+
+After creating it:
+
+```bash
+git add frontend/README.md
+git commit -m "Add frontend documentation"
+git push origin main
