@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getStudents } from "@/lib/api";
 import { Student } from "@/types/student";
 import StudentStatusBadge from "@/components/students/StudentStatusBadge";
+import AddStudentModal from "@/components/students/AddStudentModal";
 
 export default function StudentsPage() {
   const tabs = [
@@ -22,19 +23,34 @@ export default function StudentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    async function fetchStudents() {
-      try {
-        const data = await getStudents();
-        setStudents(data);
-      } catch (err) {
-        console.error("Student fetch error:", err);
-        setError("Unable to load students");
-      } finally {
-        setLoading(false);
-      }
+  async function fetchStudents() {
+    try {
+      setLoading(true);
+  
+      const data = await getStudents();
+  
+      setStudents(data);
+  
+    } catch (err) {
+  
+      console.error(
+        "Student fetch error:",
+        err
+      );
+  
+      setError(
+        "Unable to load students"
+      );
+  
+    } finally {
+  
+      setLoading(false);
+  
     }
-
+  }
+  
+  
+  useEffect(() => {
     fetchStudents();
   }, []);
 
@@ -128,9 +144,11 @@ export default function StudentsPage() {
               Bulk Upload
             </button>
 
-            <button className="rounded-lg bg-blue-600 px-4 py-2 text-white">
-              Add Student
-            </button>
+            <AddStudentModal
+              onSuccess={() => {
+              window.location.reload();
+               }}
+            />
 
           </div>
 
