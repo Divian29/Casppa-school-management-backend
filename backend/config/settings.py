@@ -149,6 +149,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://casppa-frontend-lz9waj8vx-chidiogos-projects-c6050926.vercel.app",
 ]
 
 STATICFILES_STORAGE = (
