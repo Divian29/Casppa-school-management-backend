@@ -22,6 +22,13 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from students.views import StudentViewSet
+from schools.views import (
+    SchoolViewSet,
+    SchoolClassViewSet,
+    HouseViewSet,
+)
+
+from parents.views import ParentViewSet
 
 
 router = DefaultRouter()
@@ -30,6 +37,30 @@ router.register(
     "students",
     StudentViewSet,
     basename="students"
+)
+
+router.register(
+    "schools",
+    SchoolViewSet,
+    basename="schools"
+)
+
+router.register(
+    "classes",
+    SchoolClassViewSet,
+    basename="classes"
+)
+
+router.register(
+    "houses",
+    HouseViewSet,
+    basename="houses"
+)
+
+router.register(
+    "parents",
+    ParentViewSet,
+    basename="parents"
 )
 
 

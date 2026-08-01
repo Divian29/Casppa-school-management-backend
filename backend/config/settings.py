@@ -23,9 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-k%ufbl9v_g(@y)_aa38t-6t-)$ro1-*!r0^-(jemgl6+lghj%+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    ".onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -56,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -145,4 +150,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
 
